@@ -1,0 +1,191 @@
+//Rewrite the applet programs using Swing.
+
+//This program combines several Swing features:
+//Basic GUI (Hello World, Form handling)
+//Dialogs (Message Dialog)
+//Tic-Tac-Toe Game
+//CRUD Operations (Create, Read, Update, Delete)
+//Simple Chat Program (Networking simulation)
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+
+// Main Class with JFrame
+public class AllInOneSwingApp extends JFrame {
+    
+    // GUI components for the basic form
+    private JTextField nameField, emailField;
+    private JButton submitButton, showTimeButton, ticTacToeButton, chatButton;
+    private JTextArea textArea;
+    private JTable table;
+    private DefaultTableModel tableModel;
+    
+    // Data storage for CRUD operations
+    private List<String[]> dataList;
+    
+    public AllInOneSwingApp() {
+        // Set up JFrame
+        setTitle("All-in-One Java Swing Application");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+        
+        // Initialize data list for CRUD
+        dataList = new ArrayList<>();
+        
+        // Create Top Panel (Form Section)
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new GridLayout(3, 2));
+        
+        topPanel.add(new JLabel("Name:"));
+        nameField = new JTextField();
+        topPanel.add(nameField);
+        
+        topPanel.add(new JLabel("Email:"));
+        emailField = new JTextField();
+        topPanel.add(emailField);
+        
+        submitButton = new JButton("Submit");
+        topPanel.add(submitButton);
+        
+        showTimeButton = new JButton("Show Current Time");
+        topPanel.add(showTimeButton);
+        
+        add(topPanel, BorderLayout.NORTH);
+        
+        // Button to start Tic-Tac-Toe game
+        ticTacToeButton = new JButton("Tic-Tac-Toe Game");
+        add(ticTacToeButton, BorderLayout.SOUTH);
+        
+        // Chat Button
+        chatButton = new JButton("Open Chat");
+        add(chatButton, BorderLayout.WEST);
+        
+        // Table for CRUD operations
+        tableModel = new DefaultTableModel(new Object[]{"Name", "Email"}, 0);
+        table = new JTable(tableModel);
+        JScrollPane tableScroll = new JScrollPane(table);
+        add(tableScroll, BorderLayout.CENTER);
+        
+        // Event Handlers
+        submitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                addData();
+            }
+        });
+        
+        showTimeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showCurrentTime();
+            }
+        });
+        
+        ticTacToeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                startTicTacToeGame();
+            }
+        });
+        
+        chatButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                startChat();
+            }
+        });
+        
+        // Set window visible
+        setLocationRelativeTo(null); // Center the window
+    }
+    
+    // Method for showing current time
+    private void showCurrentTime() {
+        String currentTime = java.time.LocalTime.now().toString();
+        JOptionPane.showMessageDialog(this, "Current Time: " + currentTime);
+    }
+    
+    // Method to add data to table (CRUD: Create)
+    private void addData() {
+        String name = nameField.getText();
+        String email = emailField.getText();
+        
+        if (!name.isEmpty() && !email.isEmpty()) {
+            dataList.add(new String[]{name, email});
+            tableModel.addRow(new Object[]{name, email});
+        } else {
+            JOptionPane.showMessageDialog(this, "Please fill out both fields!");
+        }
+    }
+    
+    // Tic-Tac-Toe Game
+    private void startTicTacToeGame() {
+        JFrame gameFrame = new JFrame("Tic-Tac-Toe");
+        gameFrame.setSize(300, 300);
+        gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
+        JPanel gamePanel = new JPanel();
+        gamePanel.setLayout(new GridLayout(3, 3));
+        
+        JButton[] buttons = new JButton[9];
+        for (int i = 0; i < 9; i++) {
+            buttons[i] = new JButton("");
+            buttons[i].setFont(new Font("Arial", Font.PLAIN, 60));
+            buttons[i].setFocusPainted(false);
+            buttons[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    JButton source = (JButton) e.getSource();
+                    if (source.getText().equals("")) {
+                        source.setText("X");
+                        source.setEnabled(false);
+                    }
+                }
+            });
+            gamePanel.add(buttons[i]);
+        }
+        
+        gameFrame.add(gamePanel);
+        gameFrame.setLocationRelativeTo(null);
+        gameFrame.setVisible(true);
+    }
+    
+    // Simple Chat (Networking simulation with input/output in text area)
+    private void startChat() {
+        JFrame chatFrame = new JFrame("Simple Chat");
+        chatFrame.setSize(400, 300);
+        chatFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
+        JPanel chatPanel = new JPanel();
+        chatPanel.setLayout(new BorderLayout());
+        
+        textArea = new JTextArea();
+        textArea.setEditable(false);
+        chatPanel.add(new JScrollPane(textArea), BorderLayout.CENTER);
+        
+        JTextField chatField = new JTextField();
+        chatPanel.add(chatField, BorderLayout.SOUTH);
+        
+        chatField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String message = chatField.getText();
+                if (!message.isEmpty()) {
+                    textArea.append("User: " + message + "\n");
+                    chatField.setText("");
+                }
+            }
+        });
+        
+        chatFrame.add(chatPanel);
+        chatFrame.setLocationRelativeTo(null);
+        chatFrame.setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new AllInOneSwingApp().setVisible(true);
+            }
+        });
+    }
+}
